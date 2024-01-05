@@ -8,7 +8,36 @@
   <body>
     <script>
       function playRound(playerSelection, computerSelection) {
-        // code here
+        const winMessage = `Player won! ${playerSelection.toUpperCase()} beats ${computerSelection.toUpperCase()}`;
+        const loseMessage = `Computer won! ${computerSelection.toUpperCase()} beats ${playerSelection.toUpperCase()}`;
+
+        if (playerSelection === computerSelection) {
+          console.log(
+            `Draw! ${playerSelection.toUpperCase()} and ${computerSelection.toUpperCase()} beats each other`
+          );
+        } else {
+          if (playerSelection === "rock") {
+            if (computerSelection === "scissors") {
+              console.log(winMessage);
+            } else {
+              console.log(loseMessage);
+            }
+          }
+          if (playerSelection === "paper") {
+            if (computerSelection === "rock") {
+              console.log(winMessage);
+            } else {
+              console.log(loseMessage);
+            }
+          }
+          if (playerSelection === "scissors") {
+            if (computerSelection === "paper") {
+              console.log(winMessage);
+            } else {
+              console.log(loseMessage);
+            }
+          }
+        }
       }
 
       function getComputerChoice() {
