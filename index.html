@@ -15,32 +15,22 @@
         const winMessage = `Player won! ${playerSelection.toUpperCase()} beats ${computerSelection.toUpperCase()}`;
         const loseMessage = `Computer won! ${computerSelection.toUpperCase()} beats ${playerSelection.toUpperCase()}`;
 
-        if (playerSelection === computerSelection) {
-          console.log(
-            `Draw! ${playerSelection.toUpperCase()} and ${computerSelection.toUpperCase()} beats each other`
-          );
-        } else {
-          if (playerSelection === "rock") {
-            if (computerSelection === "scissors") {
-              console.log(winMessage);
-            } else {
-              console.log(loseMessage);
-            }
-          }
-          if (playerSelection === "paper") {
-            if (computerSelection === "rock") {
-              console.log(winMessage);
-            } else {
-              console.log(loseMessage);
-            }
-          }
-          if (playerSelection === "scissors") {
-            if (computerSelection === "paper") {
-              console.log(winMessage);
-            } else {
-              console.log(loseMessage);
-            }
-          }
+        switch (true) {
+          case playerSelection === computerSelection:
+            result.textContent = `Draw! ${playerSelection.toUpperCase()} and ${computerSelection.toUpperCase()} beats each other`;
+            break;
+          case playerSelection === "rock" && computerSelection === "scissors":
+          case playerSelection === "paper" && computerSelection === "rock":
+          case playerSelection === "scissors" && computerSelection === "paper":
+            result.textContent = winMessage;
+            scores.player++;
+            playerScore.textContent = scores.player;
+            break;
+          default:
+            result.textContent = loseMessage;
+            scores.computer++;
+            computerScore.textContent = scores.computer;
+            break;
         }
       }
 
@@ -49,11 +39,6 @@
 
         return choices[Math.floor(Math.random() * 3)];
       }
-
-      const playerSelection = prompt("Enter your choice: ").toLowerCase();
-      const computerSelection = getComputerChoice();
-
-      playRound(playerSelection, computerSelection);
 
       const buttons = document.querySelectorAll("button");
       buttons.forEach((button) => {
