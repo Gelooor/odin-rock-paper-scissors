@@ -54,6 +54,16 @@
       const computerSelection = getComputerChoice();
 
       playRound(playerSelection, computerSelection);
+
+      const buttons = document.querySelectorAll("button");
+      buttons.forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const playerSelection = e.target.textContent.toLowerCase();
+          const computerSelection = getComputerChoice();
+
+          playRound(playerSelection, computerSelection);
+        });
+      });
     </script>
   </body>
 </html>
