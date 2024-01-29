@@ -168,7 +168,9 @@
 
         if (winner) {
           img.classList.add("winner");
-          outcome.textContent = `${selection.name} bonks ${selection.beats}`;
+          outcome.textContent = `${capitalizeFirstLetter(
+            selection.name
+          )} bonks ${capitalizeFirstLetter(selection.beats)}`;
         } else {
           outcome.textContent = "It's a draw!";
         }
