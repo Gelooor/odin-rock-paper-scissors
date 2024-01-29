@@ -6,6 +6,17 @@
     <title>Rock Paper Scissors</title>
 
     <style>
+      body {
+        /* background: rgb(149, 112, 206); */
+        background: linear-gradient(
+          to right,
+          rgba(149, 112, 206, 1) 35%,
+          rgba(221, 227, 241, 1) 100%
+        );
+
+        height: 100vh;
+      }
+
       .selections {
         display: flex;
         justify-content: center;
@@ -27,13 +38,41 @@
       .selections img {
         width: 150px;
       }
+
+      .results {
+        margin-top: 1rem;
+        display: grid;
+        justify-content: center;
+        grid-template-columns: repeat(2, 1fr);
+        justify-items: center;
+        align-items: center;
+      }
+
+      .result-selection {
+        opacity: 0.5;
+        width: 100px;
+      }
+
+      .result-selection.winner {
+        opacity: 1;
+        width: 110px;
+      }
+
+      .outcome,
+      .game-end {
+        text-align: center;
+        margin: 2rem 0;
+        font-size: 3rem;
+      }
     </style>
   </head>
   <body>
-    <section class="scores">
+    <div class="outcome"></div>
+    <div class="game-end"></div>
+    <!-- <section class="scores">
       <div class="player-score">Player: <span>0</span></div>
       <div class="computer-score">Computer: <span>0</span></div>
-    </section>
+    </section> -->
 
     <div class="selections">
       <button data-selection="myline">
@@ -47,18 +86,22 @@
       </button>
     </div>
 
-    <div class="result"></div>
+    <div class="results">
+      <div class="player-score">Player: <span>0</span></div>
+      <div class="computer-score final-column">Computer: <span>0</span></div>
+    </div>
 
-    <div class="winner"></div>
+    <!-- <div class="winner"></div> -->
 
     <script>
+      const outcome = document.querySelector(".outcome");
+      const gameEnd = document.querySelector(".game-end");
       const playerScore =
         document.querySelector(".player-score").firstElementChild;
       const computerScore =
         document.querySelector(".computer-score").firstElementChild;
       const buttons = document.querySelectorAll("[data-selection]");
-      const result = document.querySelector(".result");
-      const winner = document.querySelector(".winner");
+      const finalColumn = document.querySelector(".final-column");
 
       const SELECTIONS = [
         {
@@ -78,18 +121,16 @@
         },
       ];
 
-      const scores = {
-        player: 0,
-        computer: 0,
-      };
-
       buttons.forEach((button) => {
         button.addEventListener("click", (e) => {
           if (isGameOver()) {
             return;
           }
 
-          const playerSelection = e.target.textContent.toLowerCase();
+          const playerSelection = SELECTIONS.find(
+            (playerSelection) =>
+              playerSelection.name === button.dataset.selection
+          );
           const computerSelection = getComputerChoice();
 
           playRound(playerSelection, computerSelection);
@@ -98,43 +139,63 @@
       });
 
       function playRound(playerSelection, computerSelection) {
-        const winMessage = `Player won! ${playerSelection.toUpperCase()} beats ${computerSelection.toUpperCase()}`;
-        const loseMessage = `Computer won! ${computerSelection.toUpperCase()} beats ${playerSelection.toUpperCase()}`;
+        const playerWinner = isWinner(playerSelection, computerSelection);
+        const computerWinner = isWinner(computerSelection, playerSelection);
 
-        switch (true) {
-          case playerSelection === computerSelection:
-            result.textContent = `Draw! ${playerSelection.toUpperCase()} and ${computerSelection.toUpperCase()} beats each other`;
-            break;
-          case playerSelection === "rock" && computerSelection === "scissors":
-          case playerSelection === "paper" && computerSelection === "rock":
-          case playerSelection === "scissors" && computerSelection === "paper":
-            result.textContent = winMessage;
-            scores.player++;
-            playerScore.textContent = scores.player;
-            break;
-          default:
-            result.textContent = loseMessage;
-            scores.computer++;
-            computerScore.textContent = scores.computer;
-            break;
+        addSelectionResult(computerSelection, computerWinner);
+        addSelectionResult(playerSelection, playerWinner);
+
+        if (playerWinner) incrementScore(playerScore);
+        if (computerWinner) incrementScore(computerScore);
+      }
+
+      function isWinner(selection, opponentSelection) {
+        if (selection.beats === opponentSelection.name) {
+          return true;
+        } else if (selection.name === opponentSelection.name) {
+          return false;
         }
       }
 
+      function incrementScore(scoreSpan) {
+        scoreSpan.textContent = parseInt(scoreSpan.textContent) + 1;
+      }
+
+      function addSelectionResult(selection, winner) {
+        const img = document.createElement("img");
+        img.src = selection.image;
+        img.classList.add("result-selection");
+
+        if (winner) {
+          img.classList.add("winner");
+          outcome.textContent = `${selection.name} bonks ${selection.beats}`;
+        } else {
+          outcome.textContent = "It's a draw!";
+        }
+
+        finalColumn.after(img);
+      }
+
       function getComputerChoice() {
-        const choices = ["rock", "paper", "scissors"];
-        return choices[Math.floor(Math.random() * 3)];
+        return SELECTIONS[Math.floor(Math.random() * SELECTIONS.length)];
       }
 
       function displayWinner() {
-        if (scores.player === 5) {
-          winner.textContent = "Player won!";
-        } else if (scores.computer === 5) {
-          winner.textContent = "Computer won!";
+        if (playerScore.textContent === "5") {
+          gameEnd.textContent = "Player won!";
+        } else if (computerScore.textContent === "5") {
+          gameEnd.textContent = "Computer won!";
         }
       }
 
       function isGameOver() {
-        return scores.player === 5 || scores.computer === 5;
+        return (
+          playerScore.textContent === "5" || computerScore.textContent === "5"
+        );
+      }
+
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
       }
     </script>
   </body>
